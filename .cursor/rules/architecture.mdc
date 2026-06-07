@@ -1,0 +1,36 @@
+---
+description: High-level architecture rules for the crosswords-vue project
+globs: ["src/**"]
+alwaysApply: true
+---
+
+# Architecture rules
+
+## Single source of truth
+
+`src/stores/gameStore.ts` owns ALL game state. No component may hold a local copy of grid data, placed words, selection state, score, or game-over flags. Read reactively from the store; write only through store actions.
+
+## Unidirectional data flow
+
+```
+wordLists.ts  →  gameStore  ←  useWordPlacement.ts
+                    ↕
+               useSelection.ts
+                    ↓
+         WordGrid → WordCell
+         WordList
+         GameControls → gameStore (via actions)
+```
+
+## Composable responsibilities
+
+- `useWordPlacement.ts` — pure function, no Vue reactivity, no store access. Receives a grid and word pool, returns a mutated grid and `PlacedWord[]`.
+- `useSelection.ts` — bridges DOM events (mouse + touch) to store state. Calls `store.validateSelection()` on drag end. No game logic here.
+
+## Adding a word theme
+
+Add an entry to `wordThemes` in `src/data/wordLists.ts` and add its key to the `Theme` union type. Nothing else needs to change.
+
+## Adding a difficulty level
+
+Add entries to `DIFFICULTY_SIZE` and `DIFFICULTY_WORDS` in `gameStore.ts`, and a `{ value, label }` entry to `difficulties` in `GameControls.vue`.

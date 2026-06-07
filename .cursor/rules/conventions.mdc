@@ -1,0 +1,31 @@
+---
+description: Code style and conventions for the crosswords-vue project
+globs: ["src/**"]
+alwaysApply: true
+---
+
+# Code conventions
+
+## Vue components
+
+- Use the **Composition API** with `<script setup lang="ts">` exclusively. No Options API.
+- Components derive visual state from the store — never store derived values in `ref()` inside a component when a `computed()` reading from the store suffices.
+- `WordCell.vue` is the canonical example: it holds no local state, everything comes from `useGameStore()`.
+
+## Composables
+
+- Pure logic goes into composables under `src/composables/`. No component imports, no Pinia store imports unless the composable explicitly bridges DOM ↔ store (like `useSelection.ts`).
+- Composable functions are named `useXxx` and return a plain object of refs and handlers.
+
+## No external UI framework
+
+Plain CSS in scoped `<style>` blocks only. No Tailwind, no CSS-in-JS, no component libraries.
+
+## TypeScript
+
+- All exported types live in the file that owns the data. Store types (`Cell`, `PlacedWord`, `Difficulty`, `Direction`) are exported from `gameStore.ts`; word types from `wordLists.ts`.
+- Avoid `any`. Use `unknown` or a proper interface.
+
+## Touch handling
+
+Touch events are bound at the **container level** in `WordGrid.vue`, not per-cell, to avoid hundreds of listeners. The cell coordinates are read from `data-row` / `data-col` attributes via `document.elementFromPoint`.
