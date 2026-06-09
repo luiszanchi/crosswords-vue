@@ -52,20 +52,19 @@ const timerDisplay = computed(() => {
     </div>
 
     <main class="app__main">
-      <!-- On mobile the grid renders first (order: 1),
-           word list second (order: 2), controls last (order: 3).
-           On desktop all three sit side by side. -->
-      <aside class="app__panel app__panel--controls">
-        <GameControls />
-      </aside>
+      <!-- Controls and word list side by side on top -->
+      <div class="app__sidebar">
+        <aside class="app__panel app__panel--controls">
+          <GameControls />
+        </aside>
+        <aside class="app__panel app__panel--words">
+          <WordList />
+        </aside>
+      </div>
 
       <section class="app__grid">
         <WordGrid />
       </section>
-
-      <aside class="app__panel app__panel--words">
-        <WordList />
-      </aside>
     </main>
   </div>
 </template>
@@ -135,40 +134,31 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Main layout: desktop (≥ 768px) ── */
+/* ── Main layout ── */
 .app__main {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   gap: 16px;
   padding: 16px;
   flex: 1;
 }
 
+.app__sidebar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  width: 100%;
+}
+
 .app__panel {
   flex: 0 0 auto;
-  width: 220px;
 }
 
 .app__grid {
   flex: 0 0 auto;
-}
-
-/* ── Mobile (< 768px): stack vertically, grid on top ── */
-@media (max-width: 767px) {
-  .app__main {
-    flex-direction: column;
-    align-items: center;
-    padding: 12px;
-    gap: 12px;
-  }
-
-  /* Grid first */
-  .app__grid        { order: 1; }
-  /* Word list second */
-  .app__panel--words    { order: 2; width: 100%; max-width: 560px; }
-  /* Controls last */
-  .app__panel--controls { order: 3; width: 100%; max-width: 560px; }
 }
 
 /* ── Rotate-device overlay (portrait mobile only) ── */
